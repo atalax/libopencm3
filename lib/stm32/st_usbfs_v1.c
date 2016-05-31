@@ -56,10 +56,11 @@ static usbd_device *st_usbfs_v1_usbd_init(void)
 
 void st_usbfs_copy_to_pm(volatile void *vPM, const void *buf, uint16_t len)
 {
-	const uint16_t *lbuf = buf;
-	volatile uint32_t *PM = vPM;
-	for (len = (len + 1) >> 1; len; len--) {
-		*PM++ = *lbuf++;
+	const uint8_t *lbuf = buf;
+	volatile uint16_t *PM = vPM;
+	uint32_t i;
+	for (i = 0; i < len; i += 2) {
+		*PM++ = (uint16_t)lbuf[i+1] << 8 | lbuf[i];
 	}
 }
 
@@ -76,7 +77,7 @@ void st_usbfs_copy_from_pm(void *buf, const volatile void *vPM, uint16_t len)
 	const volatile uint16_t *PM = vPM;
 	uint8_t odd = len & 1;
 
-	for (len >>= 1; len; PM += 2, lbuf++, len--) {
+	for (len >>= 1; len; PM++, lbuf++, len--) {
 		*lbuf = *PM;
 	}
 
