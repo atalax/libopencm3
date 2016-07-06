@@ -39,6 +39,7 @@
 #include <libopencm3/cm3/assert.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/flash.h>
+#include <libopencm3/stm32/i2c.h>
 
 /* Set the default clock frequencies */
 uint32_t rcc_ahb_frequency = 8000000; /* 8MHz after reset */
@@ -677,6 +678,20 @@ void rcc_clock_setup_in_hsi48_out_48mhz(void)
 
 	rcc_apb1_frequency = 48000000;
 	rcc_ahb_frequency = 48000000;
+}
+
+void rcc_set_i2c_clock_hsi(uint32_t i2c)
+{
+	if (i2c == I2C1) {
+		RCC_CFGR3 &= RCC_CFGR3_I2C1SW;
+	}
+}
+
+void rcc_set_i2c_clock_sysclk(uint32_t i2c)
+{
+	if (i2c == I2C1) {
+		RCC_CFGR3 |= RCC_CFGR3_I2C1SW;
+	}
 }
 /**@}*/
 

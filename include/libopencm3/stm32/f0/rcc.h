@@ -523,6 +523,8 @@ void rcc_clock_setup_in_hsi_out_32mhz(void);
 void rcc_clock_setup_in_hsi_out_40mhz(void);
 void rcc_clock_setup_in_hsi_out_48mhz(void);
 void rcc_clock_setup_in_hsi48_out_48mhz(void);
+void rcc_set_i2c_clock_hsi(uint32_t i2c);
+void rcc_set_i2c_clock_sysclk(uint32_t i2c);
 
 END_DECLS
 
