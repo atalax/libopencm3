@@ -1,18 +1,10 @@
-/** @defgroup flash_defines FLASH Defines
+/** @addtogroup flash_defines
  *
- * @ingroup STM32F2xx_defines
- *
- * @brief Defined Constants and Types for the STM32F2xx FLASH Memory
- *
- * @version 1.0.0
- *
- * @date 14 January 2014
- *
- * LGPL License Terms @ref lgpl_license
  */
-
 /*
  * This file is part of the libopencm3 project.
+ *
+ * Copyright (C) 2017 Josef Gajdusek <atx@atx.name>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -28,11 +20,29 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBOPENCM3_FLASH_H
-#define LIBOPENCM3_FLASH_H
+/** @cond */
+#ifdef LIBOPENCM3_FLASH_H
+/** @endcond */
+#ifndef LIBOPENCM3_FLASH_COMMON_F03_H
+#define LIBOPENCM3_FLASH_COMMON_F03_H
+/**@{*/
 
-#include <libopencm3/stm32/common/flash_common_f01234.h>
-#include <libopencm3/stm32/common/flash_common_f24.h>
+/* --- Function prototypes ------------------------------------------------- */
+
+BEGIN_DECLS
+
+uint32_t flash_get_status_flags(void);
+void flash_erase_page(uint32_t page_address);
+void flash_erase_all_pages(void);
+
+END_DECLS
+/**@}*/
 
 #endif
+/** @cond */
+#else
+#warning "flash_common_f03.h should not be included directly,"
+#warning "only via flash.h"
+#endif
+/** @endcond */
 

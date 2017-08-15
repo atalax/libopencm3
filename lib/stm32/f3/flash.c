@@ -61,3 +61,20 @@ void flash_clear_status_flags(void)
 }
 /**@}*/
 
+/*---------------------------------------------------------------------------*/
+/** @brief Read All Status Flags
+
+The programming error, end of operation, write protect error and busy flags
+are returned in the order of appearance in the status register.
+
+@returns uint32_t. bit 0: busy, bit 2: programming error, bit 4: write protect
+error, bit 5: end of operation.
+*/
+
+uint32_t flash_get_status_flags(void)
+{
+	return FLASH_SR & (FLASH_SR_PGPERR |
+			FLASH_SR_EOP |
+			FLASH_SR_WRPRTERR |
+			FLASH_SR_BSY);
+}

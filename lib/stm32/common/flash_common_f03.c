@@ -1,3 +1,4 @@
+
 /** @defgroup flash_file FLASH
  *
  * @ingroup STM32F0xx
@@ -51,35 +52,74 @@
 #include <libopencm3/stm32/flash.h>
 
 /*---------------------------------------------------------------------------*/
-/** @brief Clear All Status Flags
+/** @brief Program a Half Word to FLASH
 
-Program error, end of operation, write protect error, busy.
+This performs all operations necessary to program a 16 bit word to FLASH memory.
+The program error flag should be checked separately for the event that memory
+was not properly erased.
+
+Status bit polling is used to detect end of operation.
+
+@param[in] address Full address of flash half word to be programmed.
+@param[in] data half word to write
 */
 
-void flash_clear_status_flags(void)
+void flash_program_half_word(uint32_t address, uint16_t data)
 {
-	flash_clear_pgerr_flag();
-	flash_clear_eop_flag();
-	flash_clear_wrprterr_flag();
-	flash_clear_bsy_flag();
+	flash_wait_for_last_operation();
+
+	FLASH_CR |= FLASH_CR_PG;
+
+	MMIO16(address) = data;
+
+	flash_wait_for_last_operation();
+
+	FLASH_CR &= ~FLASH_CR_PG;
 }
 
 /*---------------------------------------------------------------------------*/
-/** @brief Read All Status Flags
+/** @brief Erase a Page of FLASH
 
-The programming error, end of operation, write protect error and busy flags
-are returned in the order of appearance in the status register.
+This performs all operations necessary to erase a page in FLASH memory.
+The page should be checked to ensure that it was properly erased. A page must
+first be fully erased before attempting to program it.
 
-@returns uint32_t. bit 0: busy, bit 2: programming error, bit 4: write protect
-error, bit 5: end of operation.
+Note that the page sizes differ between devices. See the reference manual or
+the FLASH programming manual for details.
+
+@param[in] page_address Full address of flash page to be erased.
 */
 
-uint32_t flash_get_status_flags(void)
+void flash_erase_page(uint32_t page_address)
 {
-	return FLASH_SR & (FLASH_SR_PGERR |
-			FLASH_SR_EOP |
-			FLASH_SR_WRPRTERR |
-			FLASH_SR_BSY);
+	flash_wait_for_last_operation();
+
+	FLASH_CR |= FLASH_CR_PER;
+	FLASH_AR = page_address;
+	FLASH_CR |= FLASH_CR_STRT;
+
+	flash_wait_for_last_operation();
+
+	FLASH_CR &= ~FLASH_CR_PER;
+}
+
+/*---------------------------------------------------------------------------*/
+/** @brief Erase All FLASH
+
+This performs all operations necessary to erase all user pages in the FLASH
+memory. The information block is unaffected.
+*/
+
+void flash_erase_all_pages(void)
+{
+	flash_wait_for_last_operation();
+
+	FLASH_CR |= FLASH_CR_MER;		/* Enable mass erase. */
+	FLASH_CR |= FLASH_CR_STRT;		/* Trigger the erase. */
+
+	flash_wait_for_last_operation();
+	FLASH_CR &= ~FLASH_CR_MER;		/* Disable mass erase. */
+
 }
 
 /**@}*/

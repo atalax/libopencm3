@@ -31,6 +31,7 @@
 #ifndef LIBOPENCM3_FLASH_H
 #define LIBOPENCM3_FLASH_H
 
+#include <libopencm3/stm32/common/flash_common_f01234.h>
 #include <libopencm3/stm32/common/flash_common_f24.h>
 
 #endif
